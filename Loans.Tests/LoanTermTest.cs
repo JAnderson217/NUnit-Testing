@@ -7,10 +7,14 @@ using System.Text;
 
 namespace Loans.Tests
 {
-    [TestFixture]
+    //[Ignore("Ignore all")]
     public class LoanTermTest
     {
         [Test] 
+        //Ignore test
+        //[Ignore("Ignoring test")]
+        //Category - can make several tests in a category, only run tests within a category
+        [Category("Product Comaparison")]
         public void ReturnTermInMonths()
         {
             //Test conversion of years to months
@@ -31,6 +35,7 @@ namespace Loans.Tests
             //Assert.That(sut.Years, new EqualConstraint(1));
         }
         [Test]
+        [Category("Product Comaparison")]
         public void RespectValueEquality()
         {
             var a = new LoanTerm(1);

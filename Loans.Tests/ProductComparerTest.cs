@@ -8,19 +8,47 @@ namespace Loans.Tests
 {
     public class ProductComparerTest
     {
-        [Test]
-        public void ReturnCorrectNumberComparisons()
+        private List<LoanProduct> products;
+        private ProductComparer sut;
+        //OneTimeSetUp called only at start, not before each test
+        //Better for larger lists, don't have to recreate multiple times
+        //Assumption vars created here not modified, as will change other tests
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
         {
-            //check for correct number of products
-            var products = new List<LoanProduct>
+            products = new List<LoanProduct>
             {
                 new LoanProduct(1, "a", 1),
                 new LoanProduct(2, "b", 2),
                 new LoanProduct(3, "c", 3),
             };
+        }
+        //OneTimeTearDown same principle, only runs once, after last test 
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            //products.Dispose();
+        }
 
-            var sut = new ProductComparer(new LoanAmount("USD", 200_000m), products);
+        //SetUp Called before each test
+        [SetUp]
+        public void Setup()
+        {
+            sut = new ProductComparer(new LoanAmount("USD", 200_000m), products);
+        }
+        //TearDown called after each test
+        [TearDown]
+        public void TearDown()
+        {
+            //Runs after each test
+            //sut.Dispose();
+        }
 
+
+        [Test]
+        public void ReturnCorrectNumberComparisons()
+        {
+            //check for correct number of products
             List<MonthlyRepaymentComparison> comparisons =
                 sut.CompareMonthlyRepayments(new LoanTerm(30));
             Assert.That(comparisons, Has.Exactly(3).Items);
@@ -29,15 +57,6 @@ namespace Loans.Tests
         public void NotReturnDuplicateComparisons()
         {
             //check each product is unique
-            var products = new List<LoanProduct>
-            {
-                new LoanProduct(1, "a", 1),
-                new LoanProduct(2, "b", 2),
-                new LoanProduct(3, "c", 3),
-            };
-
-            var sut = new ProductComparer(new LoanAmount("USD", 200_000m), products);
-
             List<MonthlyRepaymentComparison> comparisons =
                 sut.CompareMonthlyRepayments(new LoanTerm(30));
             Assert.That(comparisons, Is.Unique);
@@ -46,15 +65,6 @@ namespace Loans.Tests
         public void ReturnComparisonFirstProduct()
         {
             //check to see if product is in list
-            var products = new List<LoanProduct>
-            {
-                new LoanProduct(1, "a", 1),
-                new LoanProduct(2, "b", 2),
-                new LoanProduct(3, "c", 3),
-            };
-
-            var sut = new ProductComparer(new LoanAmount("USD", 200_000m), products);
-
             List<MonthlyRepaymentComparison> comparisons =
                 sut.CompareMonthlyRepayments(new LoanTerm(30));
             //need to also know expected monthly repayment
@@ -65,15 +75,6 @@ namespace Loans.Tests
         public void ReturnComparisonFirstProductPartialKnown()
         {
             //check to see if product is in list with partial known values
-            var products = new List<LoanProduct>
-            {
-                new LoanProduct(1, "a", 1),
-                new LoanProduct(2, "b", 2),
-                new LoanProduct(3, "c", 3),
-            };
-
-            var sut = new ProductComparer(new LoanAmount("USD", 200_000m), products);
-
             List<MonthlyRepaymentComparison> comparisons =
                 sut.CompareMonthlyRepayments(new LoanTerm(30));
             //works with only partial knowledge, not knowing monthly repayment
